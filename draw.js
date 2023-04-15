@@ -7,9 +7,17 @@ window.onload = function() {
     document.body.appendChild(canvas);
 
     var GLES = canvas.getContext('webgl2', {
-        premultipliedAlpha: true,
+        premultipliedAlpha: false,
         alpha: true
     });
+
+    var format = GLES.RGBA8;
+    var type = GLES.UNSIGNED_BYTE;
+
+    if (GLES.getExtension("EXT_texture_norm16")) {
+        format = 0x805B; // GL_RGBA16
+        type = GLES.UNSIGNED_SHORT;
+    }
 
     var quadVBO = GLES.createBuffer();
     var screenVBO = GLES.createBuffer();
@@ -46,7 +54,7 @@ window.onload = function() {
     GLES.bindFramebuffer(GLES.FRAMEBUFFER, FBO);
     GLES.bindTexture(GLES.TEXTURE_2D, TEX);
 
-    GLES.texImage2D(GLES.TEXTURE_2D, 0, GLES.RGBA, 800, 800, 0, GLES.RGBA, GLES.UNSIGNED_BYTE, null);
+    GLES.texImage2D(GLES.TEXTURE_2D, 0, format, 800, 800, 0, GLES.RGBA, type, null);
     GLES.texParameteri(GLES.TEXTURE_2D, GLES.TEXTURE_MAG_FILTER, GLES.LINEAR);
     GLES.texParameteri(GLES.TEXTURE_2D, GLES.TEXTURE_MIN_FILTER, GLES.LINEAR);
     GLES.framebufferTexture2D(GLES.FRAMEBUFFER, GLES.COLOR_ATTACHMENT0, GLES.TEXTURE_2D, TEX, 0);
